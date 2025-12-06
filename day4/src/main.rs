@@ -1,4 +1,4 @@
-use std::collections::VecDeque;
+use std::{collections::VecDeque, time::Instant};
 
 fn main() {
     let file_content =
@@ -6,14 +6,26 @@ fn main() {
 
     let mut grid = parse_expression(&file_content);
 
-    println!(
-        "Number of accessible rolls: {}",
-        find_accessible_rolls(&grid)
-    );
+    let start = Instant::now();
+    let accessible = find_accessible_rolls(&grid);
+    let dur_find = start.elapsed();
+
+    let start = Instant::now();
+    let removed = remove_accessible_rolls(&mut grid);
+    let dur_remove = start.elapsed();
+
+    println!("Number of accessible rolls: {}", accessible);
+    println!("Number of removable rolls: {}", removed);
 
     println!(
-        "Number of removable rolls: {}",
-        remove_accessible_rolls(&mut grid)
+        "Time find_accessible_rolls:   {:?} ({} ms)",
+        dur_find,
+        dur_find.as_secs_f64() * 1000.0
+    );
+    println!(
+        "Time remove_accessible_rolls: {:?} ({} ms)",
+        dur_remove,
+        dur_remove.as_secs_f64() * 1000.0
     );
 }
 
@@ -142,4 +154,3 @@ pub fn remove_accessible_rolls(grid: &mut Grid) -> i32 {
 
     removed
 }
-
